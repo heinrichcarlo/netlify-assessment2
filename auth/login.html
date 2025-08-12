@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Netlify Assessment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="../css/styles.css" rel="stylesheet">
+    <style>
+        /* Additional auth-specific styles */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+        }
+        
+        .auth-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .auth-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--dark);
+            font-size: 2rem;
+        }
+        
+        .auth-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+        }
+        
+        .auth-message.success {
+            background-color: #e6ffed;
+            color: #22863a;
+        }
+        
+        .auth-message.error {
+            background-color: #ffeef0;
+            color: #cb2431;
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-light);
+        }
+        
+        .auth-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="logo" style="justify-content: center; margin-bottom: 30px;">
+                <div class="logo-icon">
+                    <i class="fas fa-user-shield" style="color: var(--primary); font-size: 2.5rem;"></i>
+                </div>
+                <div class="logo-text">
+                    <h1 style="font-size: 1.8rem;">Netlify Assessment</h1>
+                    <div class="tagline" style="font-size: 0.9rem;">Secure Login</div>
+                </div>
+            </div>
+            
+            <div id="auth-message" class="auth-message"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 1.1rem;">
+                    <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i> Login
+                </button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="register.html">Register here</a></p>
+                <p><a href="forgot-password.html">Forgot your password?</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    
+    <!-- Auth Logic -->
+    <script src="../js/auth.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = this['email'].value;
+            const password = this['password'].value;
+            const authMessage = document.getElementById('auth-message');
+            
+            try {
+                authMessage.style.display = 'none';
+                
+                // Show loading state
+                const submitBtn = this.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+                submitBtn.disabled = true;
+                
+                await loginUser(email, password);
+                
+                authMessage.textContent = 'Login successful! Redirecting...';
+                authMessage.className = 'auth-message success';
+                authMessage.style.display = 'block';
+                
+                setTimeout(() => {
+                    window.location.href = '../dashboard.html';
+                }, 1500);
+            } catch (error) {
+                authMessage.textContent = error.message;
+                authMessage.className = 'auth-message error';
+                authMessage.style.display = 'block';
+                
+                // Reset button
+                submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
