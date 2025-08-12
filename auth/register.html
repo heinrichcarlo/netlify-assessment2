@@ -122,6 +122,17 @@
             const password = this['password'].value;
             const confirmPassword = this['confirmPassword'].value;
             const authMessage = document.getElementById('auth-message');
+
+            try {
+                // Use the globally available function
+                await window.authFunctions.registerUser(email, password, name);
+                alert('Registration successful!');
+                window.location.href = '/dashboard.html';
+            } catch (error) {
+                console.error('Registration error:', error);
+                document.getElementById('auth-message').textContent = error.message;
+            }
+        });
             
             // Validation
             if (password !== confirmPassword) {
