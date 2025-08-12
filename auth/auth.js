@@ -13,51 +13,26 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
 // Auth functions
-export async function registerUser(email, password, displayName) {
-    try {
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        await userCredential.user.updateProfile({ displayName });
-        return userCredential.user;
-    } catch (error) {
-        throw new Error(getFirebaseErrorMessage(error));
-    }
+function registerUser(email, password, name) {
+    return auth.createUserWithEmailAndPassword(email, password)
+        .then(userCredential => {
+            return userCredential.user.updateProfile({ displayName: name });
+        });
 }
 
-export async function loginUser(email, password) {
-    try {
-        const userCredential = await auth.signInWithEmailAndPassword(email, password);
-        return userCredential.user;
-    } catch (error) {
-        throw new Error(getFirebaseErrorMessage(error));
-    }
+function loginUser(email, password) {
+    return auth.signInWithEmailAndPassword(email, password);
 }
 
-export function getCurrentUser() {
-    return new Promise((resolve) => {
+function logoutUser() {
+    return auth.signOut();
+}
+
+function getCurrentUser() {
+    return new Promise(resolve => {
         const unsubscribe = auth.onAuthStateChanged(user => {
             unsubscribe();
             resolve(user);
         });
     });
-}
-
-export function logoutUser() {
-    return auth.signOut();
-}
-
-function getFirebaseErrorMessage(error) {
-    switch (error.code) {
-        case 'auth/email-already-in-use':
-            return 'This email is already registered.';
-        case 'auth/invalid-email':
-            return 'Please enter a valid email address.';
-        case 'auth/weak-password':
-            return 'Password should be at least 6 characters.';
-        case 'auth/user-not-found':
-            return 'No account found with this email.';
-        case 'auth/wrong-password':
-            return 'Incorrect password.';
-        default:
-            return error.message || 'Authentication failed.';
-    }
 }
