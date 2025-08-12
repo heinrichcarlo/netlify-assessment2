@@ -6,15 +6,25 @@
     <title>Register | Netlify Assessment</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="../css/styles.css" rel="stylesheet">
     <style>
-        .auth-container {
+        :root {
+            --primary: #4361ee;
+            --error: #dc3545;
+            --success: #28a745;
+            --warning: #ffc107;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            padding: 40px 20px;
-            background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
         }
         
         .auth-card {
@@ -23,21 +33,46 @@
             padding: 40px;
             width: 100%;
             max-width: 500px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.05);
-            animation: fadeIn 0.5s ease-out;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            margin: 20px;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 10px;
         }
         
         #auth-message {
-            margin: 15px 0;
-            padding: 12px;
+            padding: 15px;
             border-radius: 8px;
+            margin: 20px 0;
             display: none;
-            transition: all 0.3s ease;
         }
         
         .password-strength {
@@ -51,142 +86,184 @@
         #password-strength-bar {
             height: 100%;
             width: 0%;
-            transition: width 0.3s, background 0.3s;
+            transition: width 0.3s;
         }
     </style>
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-card">
-            <div class="logo" style="justify-content: center; margin-bottom: 30px;">
-                <div class="logo-icon">
-                    <i class="fas fa-user-plus" style="color: #4361ee; font-size: 2.5rem;"></i>
-                </div>
-                <div class="logo-text">
-                    <h1 style="font-size: 1.8rem;">Netlify Assessment</h1>
-                    <div class="tagline" style="font-size: 0.9rem;">Create Account</div>
-                </div>
+    <div class="auth-card">
+        <h1 style="text-align: center; color: var(--dark); margin-bottom: 30px;">
+            <i class="fas fa-user-plus" style="color: var(--primary);"></i> Create Account
+        </h1>
+        
+        <div id="auth-message"></div>
+        
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required>
             </div>
             
-            <div id="auth-message"></div>
-            
-            <form id="registerForm">
-                <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required minlength="8">
-                    <div class="password-strength">
-                        <div id="password-strength-bar"></div>
-                    </div>
-                    <small style="color: #6c757d;">Minimum 8 characters</small>
-                </div>
-                
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" required>
-                </div>
-                
-                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 1.1rem;">
-                    <i class="fas fa-user-plus" style="margin-right: 8px;"></i> Create Account
-                </button>
-            </form>
-            
-            <div style="text-align: center; margin-top: 20px; color: #6c757d;">
-                <p>Already have an account? <a href="login.html" style="color: #4361ee; text-decoration: none; font-weight: 600;">Login here</a></p>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
             </div>
-        </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required minlength="8">
+                <div class="password-strength">
+                    <div id="password-strength-bar"></div>
+                </div>
+                <small style="color: #666;">Minimum 8 characters</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            
+            <button type="submit" id="submitBtn">
+                <i class="fas fa-user-plus"></i> Register
+            </button>
+        </form>
+        
+        <p style="text-align: center; margin-top: 20px;">
+            Already have an account? <a href="login.html" style="color: var(--primary);">Login here</a>
+        </p>
     </div>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase SDKs (MUST COME FIRST) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     
-    <!-- Auth Logic -->
-    <script src="../js/auth.js"></script>
+    <!-- Auth Configuration -->
     <script>
-        // Password strength indicator
-        document.getElementById('password').addEventListener('input', function() {
-            const password = this.value;
-            const strengthBar = document.getElementById('password-strength-bar');
-            
-            // Calculate strength (0-100)
-            let strength = 0;
-            if (password.length > 10) strength += 40;
-            else if (password.length > 7) strength += 25;
-            
-            if (/[A-Z]/.test(password)) strength += 15;
-            if (/[0-9]/.test(password)) strength += 20;
-            if (/[^A-Za-z0-9]/.test(password)) strength += 20;
-            
-            // Update UI
-            strengthBar.style.width = Math.min(strength, 100) + '%';
-            strengthBar.style.backgroundColor = 
-                strength > 75 ? '#28a745' : 
-                strength > 50 ? '#ffc107' : '#dc3545';
-        });
-
-        // Registration handler
-        document.getElementById('registerForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const email = this['email'].value;
-            const password = this['password'].value;
-            const name = this['name'].value;
-            const confirmPassword = this['confirmPassword'].value;
-            const messageEl = document.getElementById('auth-message');
-            const submitBtn = this.querySelector('button[type="submit"]');
-
-            // Basic validation
-            if (password !== confirmPassword) {
-                messageEl.textContent = "Passwords don't match!";
-                messageEl.style.display = "block";
-                messageEl.style.background = "#f8d7da";
-                messageEl.style.color = "#721c24";
-                return;
+        // Initialize Firebase (replace with your config)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_BUCKET.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        
+        // Initialize only once
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+        
+        // Make auth functions globally available
+        window.authFunctions = {
+            registerUser: async (email, password, displayName) => {
+                try {
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    await userCredential.user.updateProfile({ displayName });
+                    return userCredential.user;
+                } catch (error) {
+                    throw error;
+                }
             }
-
-            try {
-                // Show loading state
-                messageEl.textContent = "Creating your account...";
-                messageEl.style.display = "block";
-                messageEl.style.background = "#fff3cd";
-                messageEl.style.color = "#856404";
+        };
+    </script>
+    
+    <!-- Registration Handler -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('registerForm');
+            const messageEl = document.getElementById('auth-message');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            // Password strength indicator
+            document.getElementById('password').addEventListener('input', function() {
+                const strengthBar = document.getElementById('password-strength-bar');
+                const strength = calculateStrength(this.value);
+                strengthBar.style.width = strength.percentage + '%';
+                strengthBar.style.background = strength.color;
+            });
+            
+            // Form submission
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
                 
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-
-                // Register user
-                await window.authFunctions.registerUser(email, password, name);
+                const email = form.email.value;
+                const password = form.password.value;
+                const name = form.name.value;
+                const confirmPassword = form.confirmPassword.value;
                 
-                // Success
-                messageEl.textContent = "Account created successfully! Redirecting...";
-                messageEl.style.background = "#d4edda";
-                messageEl.style.color = "#155724";
+                // Client-side validation
+                if (password !== confirmPassword) {
+                    showMessage("Passwords don't match!", 'error');
+                    return;
+                }
                 
-                // Redirect to dashboard
-                setTimeout(() => {
-                    window.location.href = "../dashboard.html";
-                }, 2000);
+                try {
+                    // Show loading state
+                    showMessage("Creating your account...", 'loading');
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                    
+                    // Register user
+                    await window.authFunctions.registerUser(email, password, name);
+                    
+                    // Success
+                    showMessage("Account created successfully! Redirecting...", 'success');
+                    
+                    // Redirect after delay
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000);
+                    
+                } catch (error) {
+                    // Handle errors
+                    let message = "Registration failed. Please try again.";
+                    if (error.code === 'auth/email-already-in-use') {
+                        message = "Email is already registered.";
+                    } else if (error.code === 'auth/weak-password') {
+                        message = "Password should be at least 6 characters.";
+                    }
+                    
+                    showMessage(message, 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register';
+                }
+            });
+            
+            function calculateStrength(password) {
+                let strength = 0;
+                if (password.length > 10) strength += 40;
+                else if (password.length > 7) strength += 25;
+                if (/[A-Z]/.test(password)) strength += 15;
+                if (/[0-9]/.test(password)) strength += 20;
+                if (/[^A-Za-z0-9]/.test(password)) strength += 20;
                 
-            } catch (error) {
-                // Error handling
-                console.error("Registration error:", error);
-                messageEl.textContent = error.message || "Registration failed. Please try again.";
-                messageEl.style.background = "#f8d7da";
-                messageEl.style.color = "#721c24";
+                return {
+                    percentage: Math.min(strength, 100),
+                    color: strength > 75 ? 'var(--success)' : 
+                           strength > 50 ? 'var(--warning)' : 'var(--error)'
+                };
+            }
+            
+            function showMessage(text, type) {
+                messageEl.textContent = text;
+                messageEl.style.display = 'block';
                 
-                // Reset button
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+                switch(type) {
+                    case 'error':
+                        messageEl.style.background = '#f8d7da';
+                        messageEl.style.color = '#721c24';
+                        break;
+                    case 'success':
+                        messageEl.style.background = '#d4edda';
+                        messageEl.style.color = '#155724';
+                        break;
+                    case 'loading':
+                        messageEl.style.background = '#fff3cd';
+                        messageEl.style.color = '#856404';
+                        break;
+                }
             }
         });
     </script>
