@@ -8,19 +8,49 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="../css/styles.css" rel="stylesheet">
     <style>
-        /* Inherits all login page styles */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+        }
+        
+        .auth-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        #auth-message {
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+            transition: all 0.3s ease;
+        }
+        
         .password-strength {
-            margin-top: 5px;
             height: 4px;
             background: #eee;
             border-radius: 2px;
+            margin-top: 5px;
             overflow: hidden;
         }
         
-        .password-strength-bar {
+        #password-strength-bar {
             height: 100%;
             width: 0%;
-            background: #ff4d4d;
             transition: width 0.3s, background 0.3s;
         }
     </style>
@@ -30,7 +60,7 @@
         <div class="auth-card">
             <div class="logo" style="justify-content: center; margin-bottom: 30px;">
                 <div class="logo-icon">
-                    <i class="fas fa-user-plus" style="color: var(--primary); font-size: 2.5rem;"></i>
+                    <i class="fas fa-user-plus" style="color: #4361ee; font-size: 2.5rem;"></i>
                 </div>
                 <div class="logo-text">
                     <h1 style="font-size: 1.8rem;">Netlify Assessment</h1>
@@ -38,7 +68,7 @@
                 </div>
             </div>
             
-            <div id="auth-message" class="auth-message"></div>
+            <div id="auth-message"></div>
             
             <form id="registerForm">
                 <div class="form-group">
@@ -55,9 +85,9 @@
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" required minlength="8">
                     <div class="password-strength">
-                        <div id="password-strength-bar" class="password-strength-bar"></div>
+                        <div id="password-strength-bar"></div>
                     </div>
-                    <small class="text-muted">Minimum 8 characters</small>
+                    <small style="color: #6c757d;">Minimum 8 characters</small>
                 </div>
                 
                 <div class="form-group">
@@ -70,8 +100,8 @@
                 </button>
             </form>
             
-            <div class="auth-footer">
-                <p>Already have an account? <a href="login.html">Login here</a></p>
+            <div style="text-align: center; margin-top: 20px; color: #6c757d;">
+                <p>Already have an account? <a href="login.html" style="color: #4361ee; text-decoration: none; font-weight: 600;">Login here</a></p>
             </div>
         </div>
     </div>
@@ -85,95 +115,78 @@
     <script>
         // Password strength indicator
         document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
             const strengthBar = document.getElementById('password-strength-bar');
-            const strength = calculatePasswordStrength(this.value);
             
-            strengthBar.style.width = strength.percentage + '%';
-            strengthBar.style.backgroundColor = strength.color;
-        });
-        
-        function calculatePasswordStrength(password) {
+            // Calculate strength (0-100)
             let strength = 0;
-            
-            // Length check
             if (password.length > 10) strength += 40;
             else if (password.length > 7) strength += 25;
             
-            // Complexity checks
             if (/[A-Z]/.test(password)) strength += 15;
             if (/[0-9]/.test(password)) strength += 20;
             if (/[^A-Za-z0-9]/.test(password)) strength += 20;
             
-            // Determine color
-            let color;
-            if (strength > 75) color = '#28a745';
-            else if (strength > 50) color = '#ffc107';
-            else color = '#dc3545';
-            
-            return { percentage: Math.min(strength, 100), color };
-        }
-        
+            // Update UI
+            strengthBar.style.width = Math.min(strength, 100) + '%';
+            strengthBar.style.backgroundColor = 
+                strength > 75 ? '#28a745' : 
+                strength > 50 ? '#ffc107' : '#dc3545';
+        });
+
         // Registration handler
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const name = this['name'].value.trim();
-            const email = this['email'].value.trim();
+            const email = this['email'].value;
             const password = this['password'].value;
+            const name = this['name'].value;
             const confirmPassword = this['confirmPassword'].value;
-            const authMessage = document.getElementById('auth-message');
+            const messageEl = document.getElementById('auth-message');
+            const submitBtn = this.querySelector('button[type="submit"]');
+
+            // Basic validation
+            if (password !== confirmPassword) {
+                messageEl.textContent = "Passwords don't match!";
+                messageEl.style.display = "block";
+                messageEl.style.background = "#f8d7da";
+                messageEl.style.color = "#721c24";
+                return;
+            }
 
             try {
-                // Use the globally available function
-                await window.authFunctions.registerUser(email, password, name);
-                alert('Registration successful!');
-                window.location.href = '/dashboard.html';
-            } catch (error) {
-                console.error('Registration error:', error);
-                document.getElementById('auth-message').textContent = error.message;
-            }
-        });
-            
-            // Validation
-            if (password !== confirmPassword) {
-                authMessage.textContent = 'Passwords do not match';
-                authMessage.className = 'auth-message error';
-                authMessage.style.display = 'block';
-                return;
-            }
-            
-            if (password.length < 8) {
-                authMessage.textContent = 'Password must be at least 8 characters';
-                authMessage.className = 'auth-message error';
-                authMessage.style.display = 'block';
-                return;
-            }
-            
-            try {
-                authMessage.style.display = 'none';
-                
                 // Show loading state
-                const submitBtn = this.querySelector('button[type="submit"]');
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+                messageEl.textContent = "Creating your account...";
+                messageEl.style.display = "block";
+                messageEl.style.background = "#fff3cd";
+                messageEl.style.color = "#856404";
+                
                 submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+                // Register user
+                await window.authFunctions.registerUser(email, password, name);
                 
-                await registerUser(email, password, name);
+                // Success
+                messageEl.textContent = "Account created successfully! Redirecting...";
+                messageEl.style.background = "#d4edda";
+                messageEl.style.color = "#155724";
                 
-                authMessage.textContent = 'Registration successful! Redirecting...';
-                authMessage.className = 'auth-message success';
-                authMessage.style.display = 'block';
-                
+                // Redirect to dashboard
                 setTimeout(() => {
-                    window.location.href = '../dashboard.html';
-                }, 1500);
+                    window.location.href = "../dashboard.html";
+                }, 2000);
+                
             } catch (error) {
-                authMessage.textContent = error.message;
-                authMessage.className = 'auth-message error';
-                authMessage.style.display = 'block';
+                // Error handling
+                console.error("Registration error:", error);
+                messageEl.textContent = error.message || "Registration failed. Please try again.";
+                messageEl.style.background = "#f8d7da";
+                messageEl.style.color = "#721c24";
                 
                 // Reset button
-                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
                 submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
             }
         });
     </script>
